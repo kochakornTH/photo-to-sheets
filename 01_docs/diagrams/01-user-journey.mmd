@@ -1,0 +1,30 @@
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Arial","fontSize":"14px","primaryColor":"#ffffff","primaryBorderColor":"#333","lineColor":"#555"}}}%%
+flowchart TD
+  start([Start]) --> know{Know the<br/>route keyword?}
+  know -->|no| help["Send email<br/>Subject: <b>help</b>"] --> list["Bot replies with route list<br/>keyword · what it does · required input"] --> compose
+  know -->|yes| compose
+
+  subgraph MAIL["Compose one email to the bot"]
+    direction TB
+    compose["Subject: <b>&lt;route&gt;</b> [args]<br/>e.g. expenseAdd #food · jobSave · summarize"]
+    compose --> body["Body: free-text instructions / note<br/>(optional; used if no keyword)"]
+    body --> att["Attach files if the route needs them"]
+  end
+
+  att --> send["Send"]
+  send --> ack["Auto-ack: 'Received · case #1234 · route X'<br/>(or 'Not sure what you mean' → see below)"]
+  ack --> wait["Wait for result in same thread"]
+  wait --> reply{Result?}
+
+  reply -->|"done"| res["Result in reply<br/>text · link · attachment"] --> done([End])
+  reply -->|"needs_input"| ask["Bot asks a question<br/>e.g. 'Which task?' · 'Missing attachment'"]
+  ask --> ans["Reply in the same thread"] --> wait
+  reply -->|"failed"| fail["Error with case #<br/>retry later or check error_log"] --> done
+  reply -->|"no ack after 10 min"| mon["Check n8n executions / monitoring"] --> done
+
+  classDef user fill:#EEF2FF,stroke:#4F46E5,color:#111
+  classDef bot fill:#E8F5E9,stroke:#2E7D32,color:#111
+  classDef warn fill:#FFF7E6,stroke:#B45309,color:#111
+  class help,compose,body,att,send,ans user
+  class list,ack,wait,res bot
+  class ask,fail,mon warn

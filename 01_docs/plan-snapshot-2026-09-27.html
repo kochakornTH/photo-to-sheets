@@ -1,0 +1,595 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Plan, September 2026 to January 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F7F9;
+  --surface:#FFFFFF;
+  --ink:#191B20;
+  --ink-soft:#4E535E;
+  --ink-faint:#787E8B;
+  --rule:#DFE2E8;
+  --rule-strong:#C3C8D2;
+  --accent:#3F3A9E;
+  --accent-soft:#ECEBF8;
+  --settled:#14654F;
+  --settled-soft:#E3F1EC;
+  --open:#8A5209;
+  --open-soft:#FAEEDB;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111318;
+    --surface:#191C23;
+    --ink:#E7E9ED;
+    --ink-soft:#A8AEBB;
+    --ink-faint:#7C838F;
+    --rule:#2A2E37;
+    --rule-strong:#3C424E;
+    --accent:#A9A2F0;
+    --accent-soft:#23214A;
+    --settled:#6FCBAC;
+    --settled-soft:#10352C;
+    --open:#E7B25F;
+    --open-soft:#3A2A0E;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111318;
+  --surface:#191C23;
+  --ink:#E7E9ED;
+  --ink-soft:#A8AEBB;
+  --ink-faint:#7C838F;
+  --rule:#2A2E37;
+  --rule-strong:#3C424E;
+  --accent:#A9A2F0;
+  --accent-soft:#23214A;
+  --settled:#6FCBAC;
+  --settled-soft:#10352C;
+  --open:#E7B25F;
+  --open-soft:#3A2A0E;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:860px;margin:0 auto;padding:56px 24px 96px}
+header{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:44px}
+h1{font-size:34px;line-height:1.15;font-weight:600;margin:0 0 10px;letter-spacing:-0.02em}
+.premise{margin:0;color:var(--ink-soft);max-width:60ch}
+.stamp{font-family:var(--mono);font-size:13px;color:var(--ink-faint);margin:0 0 14px}
+section{margin-bottom:52px}
+h2{font-size:14px;font-weight:600;letter-spacing:0.02em;margin:0 0 18px;padding-bottom:8px;border-bottom:1px solid var(--rule);color:var(--ink)}
+h3{font-size:18px;font-weight:600;margin:0 0 6px}
+p{margin:0 0 14px;max-width:68ch}
+.lede{color:var(--ink-soft);margin-bottom:24px}
+
+.chain{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin-bottom:18px}
+.mod{
+  flex:1 1 170px;background:var(--surface);border:1px solid var(--rule-strong);
+  border-top:3px solid var(--accent);padding:14px 16px;border-radius:0;
+}
+.mod .id{font-family:var(--mono);font-size:12px;color:var(--accent);display:block;margin-bottom:4px}
+.mod .what{font-weight:500;font-size:15px;display:block;line-height:1.35}
+.mod .when{font-size:13px;color:var(--ink-faint);display:block;margin-top:6px}
+
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{
+  text-align:left;font-weight:600;font-size:13px;color:var(--ink-soft);
+  border-bottom:1px solid var(--rule-strong);padding:0 12px 8px 0;vertical-align:bottom;
+}
+td{border-bottom:1px solid var(--rule);padding:12px 12px 12px 0;vertical-align:top;line-height:1.45}
+td:first-child,th:first-child{font-family:var(--mono);font-size:13px;white-space:nowrap;width:74px;padding-right:16px}
+.scroller{overflow-x:auto}
+.scroller table{min-width:620px}
+
+ol.loop{list-style:none;counter-reset:s;margin:0;padding:0}
+ol.loop li{counter-increment:s;position:relative;padding:0 0 16px 40px;border-left:1px solid var(--rule-strong);margin-left:9px}
+ol.loop li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.loop li::before{
+  content:counter(s);position:absolute;left:-9px;top:0;width:18px;height:18px;
+  background:var(--paper);border:1px solid var(--rule-strong);border-radius:50%;
+  font-family:var(--mono);font-size:11px;line-height:17px;text-align:center;color:var(--ink-soft);
+}
+ol.loop li.gate::before{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+ol.loop b{font-weight:600}
+ol.loop .note{display:block;color:var(--ink-soft);font-size:15px}
+
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+ul.plain{margin:0;padding:0;list-style:none}
+ul.plain li{padding:10px 0;border-bottom:1px solid var(--rule);font-size:15px;line-height:1.5}
+ul.plain li:last-child{border-bottom:0}
+.tag{
+  display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 6px;margin-right:8px;
+  border-radius:3px;vertical-align:1px;
+}
+.tag.done{background:var(--settled-soft);color:var(--settled)}
+.tag.open{background:var(--open-soft);color:var(--open)}
+.stack{margin:0 0 18px}
+.layer{
+  display:flex;gap:16px;align-items:baseline;background:var(--surface);
+  border:1px solid var(--rule);border-left:3px solid var(--accent);padding:11px 16px;margin-bottom:4px;
+}
+.layer .name{font-weight:600;font-size:15px;min-width:132px}
+.layer .role{color:var(--ink-soft);font-size:15px}
+.layer.outside{border-left-color:var(--settled);margin-top:14px}
+code{font-family:var(--mono);font-size:0.88em;background:var(--accent-soft);padding:1px 5px;border-radius:3px}
+.risk{background:var(--accent-soft);border-left:3px solid var(--accent);padding:14px 18px;margin:22px 0 0}
+.risk p{margin:0;font-size:15px;color:var(--ink)}
+footer{border-top:1px solid var(--rule);padding-top:18px;color:var(--ink-faint);font-size:14px}
+
+h3.sub{font-size:15px;margin:32px 0 10px;color:var(--ink)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:8px}
+.facts>div{background:var(--surface);padding:10px 14px;font-size:14px;line-height:1.45}
+.k{display:block;font-family:var(--mono);font-size:11px;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:2px}
+.v{display:block}
+table.wide td:first-child{width:auto;min-width:92px}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+ul.rules li{padding:8px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
+.cols>div{background:var(--surface);border:1px solid var(--rule);padding:10px 14px;font-size:14px;line-height:1.9}
+pre{background:var(--surface);border:1px solid var(--rule);padding:12px 14px;overflow-x:auto;margin:14px 0;font-size:13px;line-height:1.55}
+pre code{background:none;padding:0;font-size:inherit}
+a.doc{color:var(--accent);font-weight:500;text-underline-offset:3px}
+a.doc:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.small{font-size:14px;color:var(--ink-soft)}
+#photo-to-sheets .pair{margin-top:32px}
+@media (max-width:640px){.cols{grid-template-columns:1fr}}
+@media (max-width:640px){
+  .wrap{padding:36px 18px 64px}
+  h1{font-size:27px}
+  .pair{grid-template-columns:1fr;gap:20px}
+  body{font-size:16px}
+}
+</style>
+<div class="wrap">
+
+<header>
+  <p class="stamp">Revised 18 September 2026 · photo-to-sheets spec added 24 September, updated 25 September, model 26 September, email bot router 27 September</p>
+  <h1>One system, one language, one application window</h1>
+  <p class="premise">Certifications are out. What replaces them is a single pipeline built in public, a German ladder that feeds on it, and applications starting in January.</p>
+</header>
+
+<section>
+  <h2>The build</h2>
+  <p class="lede">Not five projects. One repo, five modules, in dependency order.</p>
+  <div class="chain">
+    <div class="mod"><span class="id">auto1</span><span class="what">Mail in, summarise, export</span><span class="when">ship end of Sep</span></div>
+    <div class="mod"><span class="id">auto2 + data1</span><span class="what">Gather several sources into governed tables</span><span class="when">ship end of Oct</span></div>
+    <div class="mod"><span class="id">data2</span><span class="what">Feature prep, splits, labels</span><span class="when">Nov</span></div>
+    <div class="mod"><span class="id">auto3</span><span class="what">Deploy, measure, retune</span><span class="when">ship end of Nov</span></div>
+  </div>
+  <p>n8n sits at the event edge, Databricks on Azure does the processing, and process mining runs on the pipeline's own execution log once there is enough of it to be worth mining. Every step logs a case id from day one so that log exists in November.</p>
+</section>
+
+<section>
+  <h2>The agent loop in auto3</h2>
+  <p class="lede">Two human gates. The agent proposes, you approve, nothing deploys on its own.</p>
+  <ol class="loop">
+    <li><b>Agent writes feature SQL</b><span class="note">Validated against a dev schema first — you only read SQL that already ran.</span></li>
+    <li class="gate"><b>Gate 1: you review the SQL</b><span class="note">Mainly looking for leakage. Approved features get committed to <code>features/</code>; the merge triggers the rebuild.</span></li>
+    <li><b>Agent tunes within a fixed search space</b><span class="note">A handful of hyperparameters, a list of candidate features. Stop after three rounds or when the delta is under 1%.</span></li>
+    <li class="gate"><b>Gate 2: you review the result</b><span class="note">Current vs candidate on the same held-out split, metric delta, what changed, MLflow run link.</span></li>
+    <li><b>You push; deployment runs</b><span class="note">Approval is a registry stage change, not bespoke plumbing.</span></li>
+    <li><b>Measurement on new data feeds back</b><span class="note">Accuracy where ground truth exists, input drift where it doesn't yet. A drop restarts the loop.</span></li>
+  </ol>
+  <div class="risk">
+    <p>Decided 26 Sep: the model forecasts money left at month end from Revolut transactions and receipts, replacing the energy-price idea. Labels still arrive free, at month end and after 7 days. See <a class="doc" href="#forecast-model">Forecast model</a>.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Month by month</h2>
+  <div class="scroller">
+  <table>
+    <thead>
+      <tr><th>Month</th><th>German</th><th>Build</th><th>CI/CD</th><th>Job hunt</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sep</td>
+        <td>Free writing</td>
+        <td>n8n basics, Unity Catalog, Auto Loader; auto1 end to end</td>
+        <td>Repo, git discipline, compose for n8n + Postgres</td>
+        <td>Target list, save Rheinland ads</td>
+      </tr>
+      <tr>
+        <td>Oct</td>
+        <td>Speak about what you built</td>
+        <td>auto2 + data1: ingest to bronze, silver, gold</td>
+        <td>Dockerfile, pytest on transforms, Actions running lint and tests</td>
+        <td>Keep saving ads, LinkedIn in German</td>
+      </tr>
+      <tr>
+        <td>Nov</td>
+        <td>Present it, to a real audience</td>
+        <td>data2 + auto3, process mining on the execution log</td>
+        <td>Asset Bundles, dev and prod targets, deploy on merge</td>
+        <td>CV draft from project bullets</td>
+      </tr>
+      <tr>
+        <td>Dec</td>
+        <td>Answer questions about it</td>
+        <td>Keep it running, fix what breaks</td>
+        <td>Nothing new — CI tells you it still works</td>
+        <td>CV and Anschreiben polish</td>
+      </tr>
+      <tr>
+        <td>Jan</td>
+        <td>Interview practice</td>
+        <td>Talking point, not new work</td>
+        <td>—</td>
+        <td>Apply</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>How the stack fits together</h2>
+  <p class="lede">Four names, four different layers. Reading downwards, each one runs on the one below it.</p>
+  <div class="stack">
+    <div class="layer"><span class="name">Your code</span><span class="role">Transforms, notebooks, jobs</span></div>
+    <div class="layer"><span class="name">Databricks</span><span class="role">Managed platform: Delta, Unity Catalog, MLflow, scheduling</span></div>
+    <div class="layer"><span class="name">Spark</span><span class="role">The open-source engine that splits work across machines</span></div>
+    <div class="layer"><span class="name">Azure</span><span class="role">The machines, storage, identity and secrets underneath</span></div>
+    <div class="layer outside"><span class="name">Docker</span><span class="role">A separate axis — packages your own services, not Spark</span></div>
+  </div>
+  <p>Databricks doesn't own data centres, so Azure Databricks means the platform running on Microsoft hardware with ADLS Gen2 for files and Entra ID for login. Docker sits outside that stack entirely: n8n and the extractor run in containers on your host and hand data to Azure storage.</p>
+  <p>Fabric is the alternative to the middle two — Microsoft's own Spark-and-Delta platform. That's why existing Fabric knowledge carries over: same engine, same file format, different wrapper around them.</p>
+</section>
+
+<section>
+  <h2>Data model</h2>
+  <p class="lede">Business data and model metadata are different problems. Splitting them was the fix to the single combined store in the first sketch.</p>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Schema</th><th>Holds</th><th>Written by</th></tr></thead>
+    <tbody>
+      <tr><td>bronze</td><td>Raw arrivals, never edited</td><td>Ingest job</td></tr>
+      <tr><td>silver</td><td>Cleaned, typed, deduplicated on a business key</td><td>Ingest job, via MERGE</td></tr>
+      <tr><td>gold</td><td>Features, labels, predictions, daily metrics</td><td>Feature and scoring jobs</td></tr>
+      <tr><td>MLflow</td><td>Runs, parameters, metrics, model versions</td><td>Training job — not a table you design</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The join between the two halves is a <code>run_id</code> column on gold tables, so any prediction can be traced back to the model version and the data that produced it. Every prediction row also carries its <code>model_version</code>; without that, a drop in accuracy can't be attributed to anything.</p>
+  <div class="risk">
+    <p>Rename the modules for what they do rather than build order — <code>ingest-mail</code>, <code>ingest-sources</code>, <code>feature-store</code>, <code>train</code>, <code>serve</code>. In six weeks <code>auto2</code> and <code>data1</code> won't mean anything to you, and less to a reviewer.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Reference build: the iris daily loop</h2>
+  <p class="lede">A throwaway version of the real loop, small enough to finish in an evening and shaped like the thing it rehearses.</p>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Order</th><th>Task</th><th>Does</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>ingest</td><td>Appends the day's batch to bronze, MERGEs into silver so a retried day can't double its rows</td></tr>
+      <tr><td>2</td><td>score</td><td>Predicts with the champion alias, writes predictions and one accuracy row per day</td></tr>
+      <tr><td>3</td><td>train</td><td>Logs a run to MLflow, registers a candidate, prints the delta — and stops</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Scoring runs before training on purpose: the day's measurement should reflect the model that was actually serving, not one retrained on the same day's data. Promotion is a separate deliberate act — setting the <code>champion</code> alias to the candidate version, which is the gate, and which also gives rollback for free.</p>
+  <p>Use aliases rather than the old <code>Staging</code> and <code>Production</code> stages; the stages are deprecated, so older tutorials will send you the wrong way. Run the whole thing on Databricks Free Edition until the loop works, then rebuild on Azure — idle clusters eat a student credit fast.</p>
+</section>
+
+<section id="photo-to-sheets">
+  <h2>Project spec: photo-to-sheets (expense log)</h2>
+  <p class="lede">The first concrete n8n build and your first working version of <code>auto1</code>. You email a receipt photo, an LLM reads it, and a row appears in Google Sheets. Spec agreed on 23–24 September.</p>
+
+  <div class="facts">
+    <div><span class="k">Runs on</span><span class="v">n8n self-hosted in Docker, Windows PC</span></div>
+    <div><span class="k">Input</span><span class="v">Gmail, dedicated automation account</span></div>
+    <div><span class="k">Allowed sender</span><span class="v"><code>kochakorn.th@gmail.com</code> only</span></div>
+    <div><span class="k">Output</span><span class="v">Google Sheet + Drive photo folder, owned by the automation account; the Sheet is shared as Viewer with your personal account</span></div>
+    <div><span class="k">Folder</span><span class="v"><code>G:\My Drive\Project\n8n\photo-to-sheets</code>, with the repo moving to <code>C:\dev\</code></span></div>
+    <div><span class="k">Budget</span><span class="v">~10 h/week, 65–85 h total, done around mid-November</span></div>
+  </div>
+
+  <h3 class="sub">Key decisions</h3>
+  <div class="scroller">
+  <table class="wide">
+    <thead><tr><th>Topic</th><th>Decision</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Input</td><td>Gmail, not Telegram</td><td>The email body can carry a note. Polling means no webhook or tunnel for Docker, and there are fewer privacy concerns than with a bot.</td></tr>
+      <tr><td>Account</td><td>Dedicated automation Gmail</td><td>n8n never touches your personal inbox. One inbox is shared by all automation projects.</td></tr>
+      <tr><td>Sender</td><td>Allow-list of one address</td><td>Protects LLM credits and stops strangers putting text into the prompt.</td></tr>
+      <tr><td>Routing</td><td>First word of the subject is the route; the rest is data</td><td>Easy to type on a phone.</td></tr>
+      <tr><td>Workflows</td><td>Central router + one sub-workflow per route (changed 27 Sep)</td><td>Several daily-life uses and a second owner are planned; see <a class="doc" href="#email-bot">Email bot</a>.</td></tr>
+      <tr><td>Scope</td><td>v1 → v2 → v3, with a parking lot</td><td>Keeps v1 small enough to finish.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3 class="sub">Routing</h3>
+  <div class="scroller">
+  <table class="wide">
+    <thead><tr><th>Subject</th><th>Gmail filter → label</th><th>Flow</th></tr></thead>
+    <tbody>
+      <tr><td>expense #food @card</td><td><code>from:kochakorn.th@gmail.com subject:expense has:attachment</code> → <code>expense</code></td><td>Photo → Sheet → reply. The note goes in the email body.</td></tr>
+      <tr><td>expreport 2026-09</td><td><code>from:kochakorn.th@gmail.com subject:expreport</code> → <code>expreport</code></td><td>Report sent to a fixed address. Also accepts <code>last30</code>; an empty subject means this month. Parked for now.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <ul class="plain rules">
+    <li>Route keywords are one word, with no hyphens or spaces. Gmail splits <code>expense-report</code> into two words, so it would also match <code>subject:expense</code>.</li>
+    <li>"Re: expense" can trigger the flow again, so n8n checks that the first word of the subject exactly matches the route.</li>
+    <li>Shared status labels are <code>processed</code>, <code>failed</code> and <code>duplicate</code>. The trigger query is <code>label:expense -label:processed has:attachment</code>.</li>
+  </ul>
+
+  <h3 class="sub">Email note handling</h3>
+  <ul class="plain rules">
+    <li>The subject carries the route and tags (<code>#food @card</code>). The body is a free-text note.</li>
+    <li>The body is cleaned: use the text/plain part, and strip signatures, "Sent from my iPhone" and quoted replies (<code>normalize.py</code>, with tests).</li>
+    <li>The note may set the category, purpose and tags. Amount, date and merchant come only from the photo. If the two conflict, trust the photo and set <code>needs_review = true</code>.</li>
+    <li>With several photos in one email, the same note applies to each. The key is <code>message_id</code> + attachment index.</li>
+  </ul>
+
+  <h3 class="sub">v1 flow</h3>
+  <ol class="loop">
+    <li><b>Gmail Trigger</b><span class="note"><code>label:expense -label:processed has:attachment</code></span></li>
+    <li class="gate"><b>IF sender = kochakorn.th</b><span class="note">Everything else stops here.</span></li>
+    <li><b>LLM reads the receipt</b><span class="note">Prompt v1 with an output schema, so the JSON comes back clean from the start. Extract every line item, not only the total.</span></li>
+    <li><b>Write rows</b><span class="note">One receipt row plus its line items (Sheets for the first run, then Postgres in v2).</span></li>
+    <li><b>Gmail reply</b><span class="note">"Saved: REWE · 2026-09-23 · €12.40"</span></li>
+    <li><b>Label <code>processed</code></b><span class="note">So the trigger doesn't pick the email up again.</span></li>
+  </ol>
+
+  <h3 class="sub">Sheet</h3>
+  <p>Tabs: <code>data</code>, <code>review</code>, <code>run_log</code> and <code>error_log</code>. Keep <code>run_log</code> in a separate file later, because the API quota (~60 requests a minute) is the real limit, not cell count.</p>
+  <div class="cols">
+    <div><span class="k">Note columns</span><code>note_raw</code> <code>note_clean</code> <code>tags</code> <code>category</code> <code>category_source</code></div>
+    <div><span class="k">Dedupe columns</span><code>source</code> <code>source_id</code> <code>content_hash</code> <code>dedupe_key</code> <code>processed_at</code></div>
+  </div>
+
+  <h3 class="sub">Duplicate checks</h3>
+  <div class="scroller">
+  <table class="wide">
+    <thead><tr><th>Level</th><th>Catches</th><th>Key</th><th>Where / when</th></tr></thead>
+    <tbody>
+      <tr><td>1 · item</td><td>n8n processing the same email twice</td><td><code>message_id</code> + attachment index, plus the <code>processed</code> label</td><td>Right after the trigger · v2</td></tr>
+      <tr><td>2 · file</td><td>The same photo sent again</td><td>SHA-256 of the file</td><td>Before the LLM call, which saves cost · v3</td></tr>
+      <tr><td>3 · receipt</td><td>A new photo of the same receipt</td><td><code>merchant|date|total</code></td><td>After normalization; send to review, don't reject · v3</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <pre><code>// n8n Code node (JS, Run Once for Each Item)
+// self-hosted needs NODE_FUNCTION_ALLOW_BUILTIN=crypto
+const crypto = require('crypto');
+const buffer = await this.helpers.getBinaryDataBuffer($itemIndex, 'data');
+const hash = crypto.createHash('sha256').update(buffer).digest('hex');
+return { json: { ...$json, content_hash: hash }, binary: $input.item.binary };</code></pre>
+  <pre><code># normalize.py
+def dedupe_key(merchant, date, total):
+    m = re.sub(r"[^a-z0-9]", "", merchant.lower())
+    return f"{m}|{date}|{total:.2f}"</code></pre>
+  <p class="small">If a Sheets "Get Row(s)" lookup finds nothing, it outputs no items and the flow stops. Turn on <b>Always Output Data</b> and check for an empty result in an IF node.</p>
+
+  <h3 class="sub">Storage and scaling</h3>
+  <ul class="plain rules">
+    <li>A new Google account gets 5 GB until you link a phone number, then 15 GB shared by Gmail, Drive and Photos. Link a phone number.</li>
+    <li>Each photo is stored twice, once as the attachment and once in Drive. At 5 photos a day that's about 11 GB a year, or about 1 GB if resized to ~300 KB.</li>
+    <li>v3 fixes: resize to ~1600 px at JPEG quality 80, trash the email after saving to Drive, and write a retention rule in <code>gdpr-notes.md</code>.</li>
+    <li>README gets a "How this scales" section: Personal (Google) → Team (Blob/S3 + Postgres) → Company (queue, lakehouse/Fabric). Describe it, don't build it.</li>
+  </ul>
+  <pre><code># n8n Docker env
+EXECUTIONS_DATA_PRUNE=true
+EXECUTIONS_DATA_MAX_AGE=168
+N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+
+# .env.example (names only; real values never go in the public repo)
+AUTOMATION_GMAIL=
+ALLOWED_SENDER=
+LLM_API_KEY=
+GOOGLE_SHEET_ID=
+GOOGLE_DRIVE_FOLDER_ID=</code></pre>
+
+  <h3 class="sub">Two builds, one core</h3>
+  <p>The whole program is built twice, once for personal use and once as a company setup. The business logic is written once and both builds use it. The README then compares the two with measured numbers: the same accuracy (same core), plus cost per receipt, latency and each build's limits.</p>
+  <div class="scroller">
+  <table class="wide">
+    <thead><tr><th>Layer</th><th>Personal</th><th>Corporate</th></tr></thead>
+    <tbody>
+      <tr><td>Shared core</td><td colspan="2">Prompt + output schema, <code>normalize.py</code>, <code>validate.py</code>, dedupe keys, product matching, <code>evaluate.py</code> + ground-truth set, one data model</td></tr>
+      <tr><td>Input</td><td>Gmail → n8n in Docker</td><td>Shared mailbox or upload page → Blob Storage</td></tr>
+      <tr><td>Processing</td><td>n8n workflow</td><td>Databricks medallion: bronze raw files, silver extraction + matching, gold facts and dimensions</td></tr>
+      <tr><td>Storage</td><td>Postgres in the same compose file, Sheets as a view only</td><td>Delta tables in Unity Catalog, <code>product</code> as SCD2</td></tr>
+      <tr><td>Identity, secrets</td><td>Personal OAuth, <code>.env</code></td><td>Entra ID + service principal, Key Vault</td></tr>
+      <tr><td>Process</td><td>One user</td><td>Many employees, manager approval, audit log, lineage</td></tr>
+      <tr><td>Delivery</td><td>docker compose</td><td>Bicep + GitHub Actions, dev and prod</td></tr>
+      <tr><td>DSGVO</td><td>Retention rule in <code>gdpr-notes.md</code></td><td>Retention, AVV with the LLM provider, EU region, deletion on request</td></tr>
+      <tr><td>Reporting</td><td>Reply email, monthly report</td><td>Power BI or a dashboard for accounting</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small">If time runs short, cut manager approval and Power BI first. Describe them in the README instead of building them.</p>
+
+  <h3 class="sub">Line items and product matching</h3>
+  <p>The same product is printed differently at each store: shallots have one name on a REWE receipt and another at ALDI. This is entity resolution, the same master-data problem companies have with SAP material masters and supplier names. Extract every line item from prompt v1, because adding it later means re-extracting every stored receipt.</p>
+  <div class="scroller">
+  <table class="wide">
+    <thead><tr><th>Table</th><th>Holds</th></tr></thead>
+    <tbody>
+      <tr><td>store</td><td>REWE, ALDI, …</td></tr>
+      <tr><td>receipt</td><td>One row per receipt: store, date, total, source ids</td></tr>
+      <tr><td>receipt_line</td><td>Raw item text as printed (never edited), quantity, price, unit</td></tr>
+      <tr><td>product</td><td>The canonical product, e.g. Schalotten</td></tr>
+      <tr><td>product_alias</td><td>(store, cleaned raw name) → product, <code>match_method</code>, <code>confidence</code>, confirmed by</td></tr>
+      <tr><td>category</td><td>Product categories: vegetables, dairy, …</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <ol class="loop">
+    <li><b>Clean</b><span class="note">Letter case, abbreviations, and split weight and unit (<code>500G</code>, <code>1KG</code>, <code>ST</code>) out of the name.</span></li>
+    <li><b>Exact lookup</b><span class="note">In <code>product_alias</code>.</span></li>
+    <li><b>Fuzzy match</b><span class="note">rapidfuzz, within the same store.</span></li>
+    <li><b>Embedding similarity</b><span class="note">For names that look very different.</span></li>
+    <li><b>LLM suggests a product</b><span class="note">With a confidence score.</span></li>
+    <li class="gate"><b>Low confidence → review queue</b><span class="note">A confirmed match becomes a new alias, so automatic coverage grows and LLM calls fall over time.</span></li>
+  </ol>
+  <p class="small">Metrics: automatic coverage %, precision on a hand-labelled set, and the share sent to review over time. Payoff: price per kg for the same product across stores and over time.</p>
+
+  <h3 class="sub">Input variability</h3>
+  <p>Photos arrive rotated, skewed or blurry, and stores change their receipt layout. The pipeline has to notice when that happens instead of quietly writing wrong numbers.</p>
+  <div class="scroller">
+  <table class="wide">
+    <thead><tr><th>Risk</th><th>What happens</th><th>Handling</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td>Rotation</td><td>Phone photos carry rotation in EXIF, which some tools ignore; people also shoot sideways or upside down</td><td>Apply EXIF orientation first (Pillow <code>ImageOps.exif_transpose</code>), then detect remaining rotation (Tesseract OSD) and rotate</td><td>v2</td></tr>
+      <tr><td>Angle, crop</td><td>Receipt shot at a slant, with table and background</td><td>Find the receipt edges and apply a perspective transform (OpenCV), then crop</td><td>v3</td></tr>
+      <tr><td>Quality</td><td>Blur, glare, low light, faded thermal paper, crumpled paper</td><td>Blur score (Laplacian variance) and brightness check before the LLM; below the threshold, reply "please retake" instead of guessing</td><td>v3</td></tr>
+      <tr><td>Split or combined</td><td>A long receipt in two photos, or two receipts in one photo</td><td>Totals check flags it; merge by <code>message_id</code>, or send to review</td><td>v3</td></tr>
+      <tr><td>Layout change</td><td>A store changes its format, a new store appears, Pfand, Rabatt and return lines, card slips attached</td><td>Vision LLM instead of templates or regex; validation rules: line items sum to the total, MwSt 7% / 19% reconciles, date is plausible; a failure goes to review</td><td>v2</td></tr>
+      <tr><td>Drift</td><td>Accuracy drops for one store without any error</td><td>Track validation failure rate per store; a rise means the format changed. The ground-truth set holds receipts from each store, including rotated and blurry ones</td><td>v3</td></tr>
+      <tr><td>Model change</td><td>The provider updates the model and output changes</td><td>Pin the model version, version prompts and schema, re-run <code>evaluate.py</code> before any switch</td><td>v2</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small">Always keep the original photo in bronze or Drive. When a rule or prompt improves, old receipts can be re-processed. In the corporate build, failed receipts land in a quarantine table instead of silver.</p>
+
+  <h3 class="sub">Versions and timeline</h3>
+  <div class="scroller">
+  <table class="wide">
+    <thead><tr><th>Phase</th><th>Contains</th><th>Hours</th><th>Dates</th></tr></thead>
+    <tbody>
+      <tr><td>Setup</td><td>Repo fix, Gmail labels and filters, Sheet and Drive folder, Google OAuth, requirements and decisions docs, prompt + schema</td><td class="num">6–8</td><td>Sep 24–27</td></tr>
+      <tr><td>v1 MVP</td><td>The six-step flow above with line items, then send one real receipt and check the rows. Keep core logic in plain Python modules from the start.</td><td class="num">8–12</td><td>Sep 28 – Oct 5</td></tr>
+      <tr><td>v2 Robust</td><td><code>normalize.py</code> / <code>validate.py</code> with tests, Postgres data model, product matching steps 1–3, EXIF rotation, totals and MwSt checks, pinned model version, dedupe level 1, error workflow, every branch tested</td><td class="num">20–25</td><td>Oct 6–19</td></tr>
+      <tr><td>Real use</td><td>Use it for your own receipts, in the background</td><td class="num">~¼/wk</td><td>Oct 6 – Nov 2</td></tr>
+      <tr><td>v3 Evaluate</td><td>20–30 ground-truth receipts from several stores (including rotated and blurry ones), <code>evaluate.py</code>, prompt v2, accuracy and matching precision, matching steps 4–6 + review queue, quality check, deskew, per-store drift, dedupe level 2, resizing and retention</td><td class="num">18–22</td><td>Oct 20 – Nov 2</td></tr>
+      <tr><td>Corporate</td><td>Same core on Databricks Free Edition first, then Azure: Blob input, medallion, Unity Catalog, Entra ID + Key Vault, Bicep + GitHub Actions, quarantine table</td><td class="num">35–45</td><td>Nov 3 – Dec 7</td></tr>
+      <tr><td>Portfolio</td><td>README with the measured personal vs corporate comparison, diagrams, interview story in German</td><td class="num">8–10</td><td>Dec 8–20</td></tr>
+      <tr><td>Buffer</td><td>+30%, spread across phases</td><td class="num">15–20</td><td>—</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small">Parking lot: the <code>expreport</code> flow as a sub-workflow with a monthly Schedule Trigger (fixed recipient, HTML table + CSV); a catch-all flow that replies "unknown route"; a central router, only if there are many projects; the full GDPR notes and schema spec, written after the MVP.</p>
+
+  <div class="pair">
+    <div>
+      <h3>Folder fixes (audit, 23 Sep)</h3>
+      <ul class="plain">
+        <li><span class="tag open">git</span>The repo is inside Google Drive, which risks a corrupted <code>.git</code>. Move it to <code>C:\dev\photo-to-sheets</code> and push to GitHub. Keep only photos in Drive.</li>
+        <li><span class="tag open">git</span>Add a <code>.gitignore</code> (the checklist says done, but there isn't one) and a <code>.gitkeep</code> in each of the 6 empty folders.</li>
+        <li><span class="tag open">docs</span>Move the structure guide from <code>README copy.md</code> to <code>01_docs/structure.md</code>, then delete the copy. Its UTF-16 tail came from PowerShell <code>echo &gt;&gt;</code>; use <code>Set-Content -Encoding utf8</code> instead.</li>
+        <li><span class="tag open">docs</span>Pick one folder naming style (<code>01_docs</code> or <code>docs/</code>). Replace Telegram with Gmail in the README, checklist and <code>.env.example</code>. Change <code>[x ]</code> to <code>[x]</code>.</li>
+        <li><span class="tag open">check</span>Confirm the first commit actually reached GitHub.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Beginner traps</h3>
+      <ul class="plain">
+        <li><span class="tag open">oauth</span>Google OAuth on self-hosted n8n needs a Cloud project, consent screen and client ID. While the app is in Testing, tokens expire every 7 days. Publish it or plan a weekly reconnect.</li>
+        <li><span class="tag open">data</span>Items, <code>$json</code> and binary data passing between nodes.</li>
+        <li><span class="tag open">llm</span>Getting clean JSON back. Use the output schema from day one.</li>
+        <li><span class="tag done">habit</span>Use each DataCamp lesson in the project the same day. Keep <code>01_docs/learning-log.md</code> in German, 2–3 lines a day (tried / broke / fixed); it becomes <code>lessons-learned.md</code> and interview stories later.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="risk">
+    <p>Scope: the project now covers the n8n and the Databricks + Azure tracks, so the separate October Databricks module goes away. The corporate build overlaps the December CV and interview work. If hours run over, cut manager approval and Power BI first, then embedding matching.</p>
+  </div>
+</section>
+
+<section id="email-bot">
+  <h2>Email bot: real-life use and router</h2>
+  <p class="lede">Decided 27 Sep: photo-to-sheets is for daily use first, not the portfolio. It becomes the first sub-workflow behind one general email router.</p>
+  <div class="scroller">
+  <table class="wide">
+    <thead><tr><th>Use</th><th>Who</th><th>When</th><th>What it needs from the design now</th></tr></thead>
+    <tbody>
+      <tr><td>Expense logging and control</td><td>Me</td><td>Now (v1)</td><td>Router + <code>expenseAdd</code> + <code>help</code>; the forecast model sits on top</td></tr>
+      <tr><td>Daily mood tracking</td><td>Me</td><td>Later, not in 2026</td><td>Scheduled prompt email, reply in thread (pending-case state); separate private store; no external LLM by default; delete email after saving</td></tr>
+      <tr><td>Invoice pictures to tables</td><td>Sister's business, Thailand</td><td>Next year</td><td><code>owner_id</code> everywhere from day one; routes and storage per owner; Thai + English invoices, 7% VAT, 13-digit tax ID, Buddhist-era dates, THB; PDPA; reliable hosting; maybe LINE instead of email</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3 class="sub">Router design</h3>
+  <ul class="plain rules">
+    <li>Channel adapters (Gmail now; schedule and LINE later) turn every input into one task envelope: <code>case_id · owner_id · route · channel · args · body_clean · attachments · locale</code>.</li>
+    <li><code>case_id</code> is a hash of <code>message_id</code>, so a retried trigger never creates a second case. Trigger query excludes the bot's own address to prevent reply loops.</li>
+    <li>Sender maps to an owner; unknown senders are dropped with no reply.</li>
+    <li>Route resolution: plus-address (<code>bot+expense@</code>, saved as phone contacts) → subject keyword → LLM classifier limited to the routes this owner is allowed. Below 0.8 confidence, reply with the help list.</li>
+    <li>Route registry (Postgres): route, workflow id, enabled, owners allowed, required input, data class, whether an external LLM may see it.</li>
+    <li>Every sub-workflow returns the same result: done, needs_input or failed, plus summary, links and files. Only the router replies.</li>
+    <li>Storage split by owner and data class: my finance, my private data, sister's business.</li>
+  </ul>
+  <h3 class="sub">Running it for real</h3>
+  <ul class="plain rules">
+    <li>Publish the Google OAuth app to production, or it stops every 7 days.</li>
+    <li>Watchdog workflow every 30 minutes: an unprocessed email older than 30 minutes, or any failure, sends a phone alert.</li>
+    <li>Nightly <code>pg_dump</code> and n8n workflow export.</li>
+    <li>PC-hosted is fine for me (emails wait in Gmail while it sleeps). Move to a small VPS before my sister depends on it.</li>
+    <li>Forwarded emails are untrusted input: the LLM only returns routes and fields, never triggers actions.</li>
+  </ul>
+  <p class="small">Build order: v1 router with keyword and plus-address routing, owners table, <code>help</code> and <code>expenseAdd</code>. v2 pending-case state and <code>expenseReport</code>. Later the LLM classifier, <code>moodLog</code>, then <code>invoiceAdd</code> for Thailand.</p>
+</section>
+
+<section id="forecast-model">
+  <h2>Forecast model: money left this month</h2>
+  <p class="lede">The ML part of the receipt project. Every day it forecasts the balance at month end and the chance each category goes over budget, then the weekly report says what to do about it. Full model card: <a class="doc" href="model.md">model.md</a>.</p>
+  <div class="facts">
+    <div><span class="k">Targets</span><span class="v">End-of-month balance as P10 / P50 / P90, spend over the next 7 days, P(over budget) per category</span></div>
+    <div><span class="k">Labels</span><span class="v">Free. They arrive at month end or after 7 days, so the loop needs no manual labelling</span></div>
+    <div><span class="k">Data</span><span class="v">Revolut CSV (one row per transaction), receipt line items, budgets; about 2 years of history</span></div>
+    <div><span class="k">Privacy</span><span class="v">Real data stays local; a synthetic generator feeds the demo and CI</span></div>
+  </div>
+  <ul class="plain rules">
+    <li><b>Small data on purpose.</b> Behaviour changes, so older data can hurt. Compare training windows of 6, 12 and 24 months, weight recent data more, and restart the window after a changepoint.</li>
+    <li><b>Model ladder.</b> Rule baseline → seasonal naive → exponential smoothing → quantile regression / GBM. Each step must beat the one before in a rolling-origin backtest.</li>
+    <li><b>Report in three layers.</b> Trend up or down, forecast range, then allowed daily spend, what drove the change, and cheaper stores. The LLM only writes the text; every number is computed and checked before sending.</li>
+    <li><b>Iteration log.</b> Every round goes to MLflow and a table in the README, which shows the model getting better step by step.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Where it stands</h2>
+  <div class="pair">
+    <div>
+      <h3>Settled</h3>
+      <ul class="plain">
+        <li><span class="tag done">dropped</span>All remaining certifications. DP-700 stays on the CV; the two SAP attempts expire unused.</li>
+        <li><span class="tag done">scope</span>German is B2 Beruf for IT and data, not a generic C1 push.</li>
+        <li><span class="tag done">scope</span>Azure means the data-engineering slice, not mastery of the platform.</li>
+        <li><span class="tag done">shape</span>One repo with five working parts, not five tutorial repos.</li>
+        <li><span class="tag done">timing</span>Applications start in January; groundwork starts now.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Still open</h3>
+      <ul class="plain">
+        <li><span class="tag done">model</span>Month-end balance and budget forecast, in <a class="doc" href="model.md">model.md</a>.</li>
+        <li><span class="tag open">history</span>How many months of Revolut export exist, and whether income is regular.</li>
+        <li><span class="tag open">sources</span>Which three sources auto2 ingests. At least one should be job ads.</li>
+        <li><span class="tag open">audience</span>Who you present to in November, and what checkpoint proves B2 Beruf.</li>
+        <li><span class="tag open">admin</span>Cancel the Databricks exam before the fee deadline.</li>
+        <li><span class="tag open">scope</span>Photo-to-sheets is now for daily use (see <a class="doc" href="#email-bot">Email bot</a>). Decide whether the corporate build (35–45 h, Nov–Dec) still happens, and re-cut the October and November rows to match.</li>
+        <li><span class="tag open">files</span>The three plan files in <code>_plan</code> — still not deleted.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  The job ads should steer October. If eight of ten ask for something not on this page, trust the ads.
+</footer>
+
+</div>
+
+
+</body></html>

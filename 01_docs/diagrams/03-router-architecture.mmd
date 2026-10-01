@@ -1,0 +1,68 @@
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Arial","fontSize":"14px","primaryColor":"#ffffff","primaryBorderColor":"#333","lineColor":"#555"}}}%%
+flowchart TD
+  subgraph IN["Channel adapters → one task envelope"]
+    direction LR
+    GM["Gmail Trigger<br/><code>label:bot -label:processed -from:bot</code>"]
+    SC["Schedule Trigger<br/>e.g. 21:00 mood prompt (later)"]
+    LN["LINE adapter<br/>(sister, later)"]
+  end
+
+  GM --> C
+  LN -.-> C
+  SC --> OUT["Send prompt email<br/>save pending case (threadId)"] --> W1([Wait for reply])
+
+  C["case_id = hash(message_id)<br/>run_log: received"] --> OW{"Sender → owner?<br/>(owners table)"}
+  OW -->|unknown| DROP["Label rejected · no reply"] --> X([Stop])
+  OW -->|"owner_id"| N["Normalize<br/>text/plain · strip signature & quote ·<br/>attachments → metadata"]
+  N --> TH{"Reply to a<br/>pending case?"}
+  TH -->|yes| RES["Resume case → same route"] --> EX
+
+  TH -->|no| KW["Resolve route<br/>1 plus-address (bot+expense@)<br/>2 subject keyword<br/>3 LLM classifier (enum of allowed routes)"]
+  KW --> REG[("Route registry<br/>route · workflow_id · enabled ·<br/>owners allowed · needs_attachment ·<br/>data_class · llm_allowed")]
+  REG --> F{"Route allowed<br/>for this owner?"}
+  F -->|"no / low confidence"| CL["Reply: help list for this owner<br/>save pending case"] --> W1
+  F -->|yes| VAL{"Input meets<br/>route contract?"}
+  VAL -->|no| MISS["Reply: what is missing<br/>save pending case"] --> W1
+  VAL -->|yes| ENV["Task envelope<br/>case_id · owner_id · route · channel ·<br/>args · body_clean · attachments · locale"]
+  ENV --> EX["Execute sub-workflow (workflow_id)"]
+
+  subgraph SUB["Sub-workflows · same result contract"]
+    direction LR
+    S1["expenseAdd<br/>(me · now)"]
+    S2["expenseReport<br/>(me · v2)"]
+    S3["moodLog<br/>(me · later · private store,<br/>no external LLM)"]
+    S4["invoiceAdd TH<br/>(sister · next year ·<br/>TH/EN · 7% VAT · BE dates)"]
+    S5["help"]
+  end
+  EX --> SUB --> RC["Result: done · needs_input · failed<br/>summary · links · files"]
+
+  subgraph DATA["Storage, split by owner & data class"]
+    direction LR
+    D1[("me / finance<br/>Postgres + Drive")]
+    D2[("me / private<br/>separate DB")]
+    D3[("sister / business<br/>own DB + Drive + Sheet")]
+  end
+  S1 --> D1
+  S2 --> D1
+  S3 --> D2
+  S4 --> D3
+
+  RC --> RP["Reply via same channel, in thread<br/>label processed · run_log: done · cost"] --> E([End])
+  RC -->|needs_input| MISS
+
+  ERR["Error workflow<br/>error_log · label failed · phone alert"]
+  HB["Watchdog (every 30 min)<br/>unprocessed > 30 min or failures → alert"]
+  EX -. on error .-> ERR
+
+  classDef guard fill:#FFEBEE,stroke:#C62828,color:#111
+  classDef core fill:#E3F2FD,stroke:#1565C0,color:#111
+  classDef now fill:#E8F5E9,stroke:#2E7D32,color:#111
+  classDef later fill:#F5F5F5,stroke:#888,stroke-dasharray:4 3,color:#333
+  classDef state fill:#FFF7E6,stroke:#B45309,color:#111
+  classDef priv fill:#F3E5F5,stroke:#6A1B9A,color:#111
+  class OW,DROP guard
+  class GM,C,N,KW,F,VAL,ENV,EX,RC,RP core
+  class S1,S5,D1 now
+  class S2,SC,LN,S4,D3 later
+  class S3,D2 priv
+  class TH,RES,CL,MISS,REG,ERR,HB,OUT state

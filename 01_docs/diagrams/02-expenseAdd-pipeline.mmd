@@ -1,0 +1,57 @@
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Arial","fontSize":"14px","primaryColor":"#ffffff","primaryBorderColor":"#333","lineColor":"#555"}}}%%
+flowchart TD
+  T["Gmail Trigger (poll 1 min)<br/><code>label:expenseAdd -label:processed has:attachment</code>"]
+  T --> C["Assign case_id<br/>write run_log: received"]
+  C --> G1{"Sender in allow-list?"}
+  G1 -->|no| DROP["Label failed · no reply<br/>(avoid backscatter)"] --> ENDX([Stop])
+  G1 -->|yes| G2{"First subject word ==<br/>expenseadd (lowercased)?"}
+  G2 -->|"no (e.g. Re: …)"| DROP
+  G2 -->|yes| P["Parse subject → #tags, @payment<br/>normalize.py: body → note_clean"]
+  P --> S["Split: 1 item per attachment<br/>key = message_id + attachment_idx"]
+
+  subgraph PER["Per attachment"]
+    direction TB
+    D1{"Key already processed?<br/>(dedupe L1)"}
+    D1 -->|yes| SKIP["Skip item"]
+    D1 -->|no| H["SHA-256 of file"]
+    H --> D2{"Hash seen?<br/>(dedupe L2)"}
+    D2 -->|yes| DUP["status = duplicate"]
+    D2 -->|no| IMG["Image prep<br/>EXIF rotate · resize 1600px · blur score"]
+    IMG --> QC{"Readable?"}
+    QC -->|no| RET["status = retake"]
+    QC -->|yes| LLM["Vision LLM extract<br/>pinned model · prompt vN · JSON schema<br/>header + line items"]
+    LLM --> V{"validate.py<br/>lines sum = total · MwSt 7/19% ·<br/>date plausible · merchant|date|total seen?"}
+    V -->|pass| OK["status = saved"]
+    V -->|fail| RV["status = needs_review"]
+    OK --> W["Write receipt + receipt_line<br/>photo → Drive"]
+    RV --> W
+  end
+
+  S --> D1
+  SKIP --> AGG
+  DUP --> AGG
+  RET --> AGG
+  W --> AGG["Merge items → 1 summary per email"]
+  AGG --> RP["Gmail reply<br/>Saved · Retake · Review · Duplicate"]
+  RP --> LB["Label processed<br/>run_log: done"] --> END([End])
+
+  ERR["Error workflow (any node fails)<br/>error_log + label failed + reply with case_id"]
+  LLM -. on error .-> ERR
+  W -. on error .-> ERR
+
+  subgraph LEG["Legend"]
+    direction LR
+    l1["v1 MVP"]:::v1
+    l2["v2 robust"]:::v2
+    l3["v3 evaluate"]:::v3
+    l4["guard / stop"]:::guard
+  end
+
+  classDef v1 fill:#E8F5E9,stroke:#2E7D32,color:#111
+  classDef v2 fill:#E3F2FD,stroke:#1565C0,color:#111
+  classDef v3 fill:#F3E5F5,stroke:#6A1B9A,color:#111
+  classDef guard fill:#FFEBEE,stroke:#C62828,color:#111
+  class T,G1,P,S,LLM,W,AGG,RP,LB v1
+  class C,G2,D1,SKIP,V,OK,RV,ERR v2
+  class H,D2,DUP,IMG,QC,RET v3
+  class DROP guard
