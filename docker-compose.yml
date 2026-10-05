@@ -30,8 +30,9 @@ services:
     volumes:
       # existing n8n data (workflows, credentials)
       - n8n_data:/home/node/.n8n
-      # bronze attachments: container path -> 05_data/bronze in this repo
-      - ./05_data/bronze:/home/node/.n8n-files/bronze
+      # bronze attachments: container path -> a folder on a normal local disk.
+      # Set BRONZE_DIR in .env. It must NOT be inside Google Drive (G:): Docker cannot write there.
+      - ${BRONZE_DIR:-./05_data/bronze}:/home/node/.n8n-files/bronze
 
 volumes:
   bot_pgdata:
