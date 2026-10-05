@@ -1,0 +1,252 @@
+{
+  "name": "router",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        -32
+      ],
+      "id": "2267b6ce-2b20-4100-b7ae-fa95715b6710",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Router: create a case for every new email, check the sender, find the route.\n-- Uses temp tables; they are dropped at the end.\n\n-- 0. Create a case for every bronze email that has none yet\nINSERT INTO silver.command (case_id, gmail_id, thread_id)\nSELECT encode(sha256(convert_to(b.gmail_id, 'UTF8')), 'hex'), b.gmail_id, b.thread_id\nFROM bronze.gmail_message b\nLEFT JOIN silver.command c ON c.gmail_id = b.gmail_id\nWHERE c.gmail_id IS NULL\nON CONFLICT (case_id) DO NOTHING;\n\nDROP TABLE IF EXISTS pg_temp.tmp_lookup, pg_temp.tmp_src, pg_temp.tmp_resolved;\n\n-- 1. Every word that names a route: the route name itself and its aliases\nCREATE TEMP TABLE tmp_lookup AS\nSELECT lower(route) AS word, route\nFROM ctl.route\nWHERE enabled\nUNION\nSELECT a.alias, a.route\nFROM ctl.route_alias a\nJOIN ctl.route r ON r.route = a.route\nWHERE r.enabled;\n\n-- 2. New cases with the three fields the router needs\nCREATE TEMP TABLE tmp_src AS\nSELECT c.case_id,\n       lower(b.message->'from'->'value'->0->>'address') AS sender,\n       substring(lower(b.message->'to'->'value'->0->>'address') from '\\+([^@]+)@') AS plus_word,\n       lower((regexp_split_to_array(\n                btrim(regexp_replace(coalesce(b.message->>'subject', ''),\n                                     '^\\s*((re|fwd?|aw|wg)\\s*:\\s*)+', '', 'i')),\n                '\\s+'))[1]) AS subject_word\nFROM silver.command c\nJOIN bronze.gmail_message b ON b.gmail_id = c.gmail_id\nWHERE c.status = 'received';\n\n-- 3. Owner from the allow-list; route from plus-address, then subject word, then help\nCREATE TEMP TABLE tmp_resolved AS\nSELECT s.case_id,\n       o.owner_id,\n       coalesce(l1.route, l2.route, 'help') AS route,\n       CASE WHEN l1.route IS NOT NULL THEN 'plus_address'\n            WHEN l2.route IS NOT NULL THEN 'subject'\n            ELSE 'fallback'\n       END AS resolved_by\nFROM tmp_src s\nLEFT JOIN ctl.owner_address o ON o.address = s.sender\nLEFT JOIN tmp_lookup l1 ON l1.word = s.plus_word\nLEFT JOIN tmp_lookup l2 ON l2.word = s.subject_word;\n\n-- 4. Write the result; unknown senders become 'failed' and get no route\nUPDATE silver.command c\nSET owner_id    = r.owner_id,\n    route       = CASE WHEN r.owner_id IS NULL THEN NULL ELSE r.route END,\n    resolved_by = CASE WHEN r.owner_id IS NULL THEN NULL ELSE r.resolved_by END,\n    status      = CASE WHEN r.owner_id IS NULL THEN 'failed' ELSE 'routed' END,\n    summary     = CASE WHEN r.owner_id IS NULL THEN 'sender not on the allow-list' END\nFROM tmp_resolved r\nWHERE c.case_id = r.case_id\nRETURNING c.case_id, c.gmail_id, c.thread_id, c.owner_id, c.route, c.resolved_by, c.status;\n\nDROP TABLE tmp_lookup, tmp_src, tmp_resolved;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        -288,
+        -80
+      ],
+      "id": "6f845375-4e2e-425b-bc0e-e5f20a19e16e",
+      "name": "Resolve route",
+      "credentials": {
+        "postgres": {
+          "id": "pP4JhW2uXNHqQyrw",
+          "name": "bot-postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "efc82647-7250-431a-a460-49a81c7051f5",
+              "leftValue": "={{ $json.case_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -64,
+        -64
+      ],
+      "id": "7ec67121-9d27-4433-b173-7eaa8425da3b",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "failed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9112bc6a-c8e9-4e0f-ab96-e173c646473d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "rejected"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4c749c50-1fc6-4007-b625-fe716052dbb5",
+                    "leftValue": "={{ $json.route }}",
+                    "rightValue": "help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        -80
+      ],
+      "id": "8679037f-fb5b-4bd1-b256-3f07b9171476",
+      "name": "dispatch"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT '{{ $json.case_id }}'   AS case_id,\n       '{{ $json.thread_id }}' AS thread_id,\n       'Available commands:' || E'\\n' ||\n       string_agg('- ' || route || ': ' || description, E'\\n' ORDER BY route) AS summary\nFROM ctl.route\nWHERE enabled;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        496,
+        -64
+      ],
+      "id": "2670afc0-8ee6-4c37-a37c-4223974c59c2",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "pP4JhW2uXNHqQyrw",
+          "name": "bot-postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -528,
+        -256
+      ],
+      "id": "513a0967-c40d-4e27-9caa-134e01026e94",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Resolve route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve route": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "dispatch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dispatch": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Resolve route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0abf04f9-ce2d-4f34-ad0b-b669126e69a2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "359120e4cfec393c86835acfee8b78363bd6ba25d9f232a5b7c692ab27438f82"
+  },
+  "nodeGroups": [],
+  "id": "XlmAgNUuZQLuZ44I",
+  "tags": []
+}
