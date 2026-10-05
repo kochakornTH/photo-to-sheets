@@ -16,5 +16,24 @@ services:
       interval: 10s
       retries: 5
 
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      GENERIC_TIMEZONE: Europe/Berlin
+      TZ: Europe/Berlin
+      # lets the Code node write attachment files to disk
+      NODE_FUNCTION_ALLOW_BUILTIN: fs
+    volumes:
+      # existing n8n data (workflows, credentials)
+      - n8n_data:/home/node/.n8n
+      # bronze attachments: container path -> 05_data/bronze in this repo
+      - ./05_data/bronze:/home/node/.n8n-files/bronze
+
 volumes:
   bot_pgdata:
+  n8n_data:
+    external: true
