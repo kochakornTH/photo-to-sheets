@@ -1,0 +1,135 @@
+{
+  "name": "ingestGmail",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "sender": "kochakorn.th@gmail.com"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f86d9183-b3a6-4e34-8441-5484d1818c7e",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iFm5TtV53u0FN0wG",
+          "name": "bot-gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO bronze.gmail_message\n  (gmail_id, thread_id, rfc_message_id, label_ids, received_at, message, folder_path, attachment_count, n8n_execution_id)\nVALUES ($1, $2, $3, $4::text[], $5::timestamptz, $6::jsonb, $7, $8::int, $9)\nON CONFLICT (gmail_id) DO NOTHING\nRETURNING gmail_id;",
+        "options": {
+          "queryReplacement": "={{ [ $json.gmail_id, $json.thread_id, $json.rfc_message_id, $json.label_ids, $json.received_at, $json.message, $json.folder_path, $json.attachment_count, $json.n8n_execution_id ] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "067dcc51-8d36-438c-8b90-8b37be6638a1",
+      "name": "Insert raw email",
+      "credentials": {
+        "postgres": {
+          "id": "pP4JhW2uXNHqQyrw",
+          "name": "bot-postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const m = $input.item.json;\nconst bins = $input.item.binary || {};\nconst h = m.headers || {};\nconst rfcId = m.messageId || h['message-id'] || null;\nconst d = new Date(m.internalDate ? Number(m.internalDate) : (m.date || h.date));\nconst folder = `${m.threadId}_${m.id}`;\nreturn {\n  json: {\n    gmail_id: m.id,\n    thread_id: m.threadId,\n    rfc_message_id: rfcId,\n    label_ids: '{' + (m.labelIds || []).join(',') + '}',\n    received_at: isNaN(d) ? null : d.toISOString(),\n    message: JSON.stringify(m),\n    folder_name: folder,\n    folder_path: `bronze/gmail/${folder}/`,\n    attachment_count: Object.keys(bins).length,\n    n8n_execution_id: String($execution.id)\n  },\n  binary: bins\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        0
+      ],
+      "id": "86f49245-38d0-428d-88c7-ec7276ca9205",
+      "name": "Prepare"
+    },
+    {
+      "parameters": {
+        "jsCode": "const fs = require('fs');\nconst ROOT = '/home/node/.n8n-files/bronze/gmail';\nconst items = $input.all();\nconst out = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const item = items[i];\n  const dir = `${ROOT}/${item.json.threadId}_${item.json.id}`;\n  const keys = Object.keys(item.binary ?? {});\n  if (keys.length) fs.mkdirSync(dir, { recursive: true });\n\n  for (let k = 0; k < keys.length; k++) {\n    const buf = await this.helpers.getBinaryDataBuffer(i, keys[k]);\n    const safe = item.binary[keys[k]].fileName.replace(/[\\\\/:*?\"<>|]/g, '_');\n    const path = `${dir}/${k}_${safe}`;\n    fs.writeFileSync(path, buf);\n    out.push({ json: { gmail_id: item.json.id, file: path, bytes: buf.length } });\n  }\n}\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        192
+      ],
+      "id": "034573d7-f944-4e3b-95f5-686b6039a4a1",
+      "name": "Save attachments"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare": {
+      "main": [
+        [
+          {
+            "node": "Insert raw email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert raw email": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "84826793-da7a-4bd1-b2b8-ba7ea7abb0be",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "359120e4cfec393c86835acfee8b78363bd6ba25d9f232a5b7c692ab27438f82"
+  },
+  "nodeGroups": [],
+  "id": "LjWeqyN0R63NJ5K6",
+  "tags": []
+}
