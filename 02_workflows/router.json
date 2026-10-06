@@ -69,6 +69,155 @@
     },
     {
       "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -528,
+        -256
+      ],
+      "id": "513a0967-c40d-4e27-9caa-134e01026e94",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "   SELECT '{{ $json.case_id }}'   AS case_id,\n          '{{ $json.gmail_id }}'  AS gmail_id,\n          '{{ $json.thread_id }}' AS thread_id,\n          'Available commands:' || E'\\n' ||\n          string_agg('- ' || route || ': ' || description, E'\\n' ORDER BY route) AS summary\n   FROM ctl.route\n   WHERE enabled;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        496,
+        -64
+      ],
+      "id": "2670afc0-8ee6-4c37-a37c-4223974c59c2",
+      "name": "Build help text",
+      "credentials": {
+        "postgres": {
+          "id": "pP4JhW2uXNHqQyrw",
+          "name": "bot-postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "WO2dYEoCngPvmgY6",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/WO2dYEoCngPvmgY6",
+          "cachedResultName": "sendReply"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "case_id": "={{ $json.case_id }}",
+            "gmail_id": "={{ $json.gmail_id }}",
+            "thread_id": "={{ $json.thread_id }}",
+            "summary": "={{ $json.summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "case_id",
+              "displayName": "case_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "gmail_id",
+              "displayName": "gmail_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "thread_id",
+              "displayName": "thread_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "html",
+              "displayName": "html",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "files",
+              "displayName": "files",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        -64
+      ],
+      "id": "f4e2044f-76eb-4dfb-99c2-28e2f21bb59f",
+      "name": "Call sendReply"
+    },
+    {
+      "parameters": {
         "rules": {
           "values": [
             {
@@ -138,17 +287,19 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT '{{ $json.case_id }}'   AS case_id,\n       '{{ $json.thread_id }}' AS thread_id,\n       'Available commands:' || E'\\n' ||\n       string_agg('- ' || route || ': ' || description, E'\\n' ORDER BY route) AS summary\nFROM ctl.route\nWHERE enabled;",
-        "options": {}
+        "query": "   UPDATE silver.command\n   SET status = 'done',\n       finished_at = now(),\n       summary = $2\n   WHERE case_id = $1\n   RETURNING case_id, gmail_id, status, finished_at;",
+        "options": {
+          "queryReplacement": "=   {{ [ $json.case_id, 'help list sent' ] }}"
+        }
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
       "position": [
-        496,
+        944,
         -64
       ],
-      "id": "2670afc0-8ee6-4c37-a37c-4223974c59c2",
-      "name": "Execute a SQL query",
+      "id": "a2e297ba-3894-49ab-a612-4755ce48e3b0",
+      "name": "Mark done",
       "credentials": {
         "postgres": {
           "id": "pP4JhW2uXNHqQyrw",
@@ -158,23 +309,27 @@
     },
     {
       "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "minutes",
-              "minutesInterval": 1
-            }
-          ]
-        }
+        "operation": "addLabels",
+        "messageId": "={{ $json.gmail_id }}",
+        "labelIds": [
+          "Label_2454911731294998401"
+        ]
       },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.4,
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
       "position": [
-        -528,
-        -256
+        1152,
+        -64
       ],
-      "id": "513a0967-c40d-4e27-9caa-134e01026e94",
-      "name": "Schedule Trigger"
+      "id": "3c8e3e20-eb64-4a3e-8f37-6e44ebe54f39",
+      "name": "Label processed",
+      "webhookId": "ddae0bfa-f9c4-4f8a-b814-2a3fdc9a723c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iFm5TtV53u0FN0wG",
+          "name": "bot-gmail"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -212,23 +367,56 @@
         ]
       ]
     },
-    "dispatch": {
+    "Schedule Trigger": {
       "main": [
-        [],
         [
           {
-            "node": "Execute a SQL query",
+            "node": "Resolve route",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Schedule Trigger": {
+    "Build help text": {
       "main": [
         [
           {
-            "node": "Resolve route",
+            "node": "Call sendReply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dispatch": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Build help text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call sendReply": {
+      "main": [
+        [
+          {
+            "node": "Mark done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark done": {
+      "main": [
+        [
+          {
+            "node": "Label processed",
             "type": "main",
             "index": 0
           }
@@ -241,7 +429,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "0abf04f9-ce2d-4f34-ad0b-b669126e69a2",
+  "versionId": "b136e64d-f6f8-424b-98f9-4aadd5cdc039",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "359120e4cfec393c86835acfee8b78363bd6ba25d9f232a5b7c692ab27438f82"
