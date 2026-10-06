@@ -45,7 +45,7 @@
     {
       "parameters": {
         "operation": "reply",
-        "messageId": "=1a101ee7323bc4ef",
+        "messageId": "={{ $json.gmail_id }}",
         "message": "=   {{ ($json.html || ($json.summary || '').replace(/\\n/g, '<br>')) + '<br><br><small>Case ' + $json.case_id.slice(0, 12) + '</small>' }}",
         "options": {
           "appendAttribution": false,
@@ -239,7 +239,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "bea0b904-7fde-494e-8b59-86069b862118",
+  "versionId": "b4dfbf45-c7c6-4ae6-a735-35781208acce",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "359120e4cfec393c86835acfee8b78363bd6ba25d9f232a5b7c692ab27438f82"
