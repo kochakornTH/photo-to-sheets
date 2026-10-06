@@ -1,0 +1,221 @@
+{
+  "name": "errorHandler",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -32
+      ],
+      "id": "b5828269-e572-4beb-a598-c8112c175a67",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO silver.error_log\n  (workflow_id, workflow_name, n8n_execution_id, execution_url, mode, node_name, error_message, error_stack)\nVALUES ($1, $2, $3, $4, $5, $6, $7, $8)\nRETURNING error_id;",
+        "options": {
+          "queryReplacement": "={{ [ $json.workflow.id, $json.workflow.name, $json.execution?.id ?? null, $json.execution?.url ?? null, $json.execution?.mode ?? $json.trigger?.mode ?? null, $json.execution?.lastNodeExecuted ?? null, $json.execution?.error?.message ?? $json.trigger?.error?.message ?? 'unknown error', $json.execution?.error?.stack ?? null ] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        -96,
+        -32
+      ],
+      "id": "b4e62336-21a6-448c-a571-80b9a0c64943",
+      "name": "Log error",
+      "credentials": {
+        "postgres": {
+          "id": "pP4JhW2uXNHqQyrw",
+          "name": "bot-postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE silver.command\nSET status = 'failed',\n    finished_at = now(),\n    summary = left($2::text, 200)\nWHERE n8n_execution_id = $1::text\n  AND status NOT IN ('done', 'failed')\nRETURNING case_id, gmail_id;",
+        "options": {
+          "queryReplacement": "={{ [ $('Error Trigger').item.json.execution?.id ?? '', $('Error Trigger').item.json.execution?.error?.message ?? 'error' ] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "cf178de1-f27d-43a7-b38a-cb8413e5b2ac",
+      "name": "Fail cases",
+      "credentials": {
+        "postgres": {
+          "id": "pP4JhW2uXNHqQyrw",
+          "name": "bot-postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "97004e74-ee3e-4b2f-90cd-1de47a2c298a",
+              "leftValue": "={{ $json.gmail_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        352,
+        -32
+      ],
+      "id": "aa9fc207-dd27-4d3d-aa4d-414465605068",
+      "name": "Has case"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.gmail_id }}",
+        "labelIds": [
+          "Label_3512636147956666077"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        -32
+      ],
+      "id": "06ce52d9-b7bb-4a61-8665-0f8eb70f6482",
+      "name": "Label failed",
+      "webhookId": "9baa6532-7be6-45da-b691-0bf064e9e1e2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iFm5TtV53u0FN0wG",
+          "name": "bot-gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "kochakorn.th@gmail.com",
+        "subject": "=Bot error: {{ $('Error Trigger').item.json.workflow.name }}",
+        "emailType": "text",
+        "message": "={{ 'Workflow: ' + $('Error Trigger').item.json.workflow.name + '\\nNode: ' + ($('Error Trigger').item.json.execution?.lastNodeExecuted ?? 'trigger') + '\\nError: ' + ($('Error Trigger').item.json.execution?.error?.message ?? $('Error Trigger').item.json.trigger?.error?.message ?? 'unknown') + '\\nCases: ' + ($('Fail cases').all().map(i => i.json.case_id).filter(Boolean).map(c => c.slice(0, 12)).join(', ') || 'none') + '\\nExecution: ' + ($('Error Trigger').item.json.execution?.url ?? '-') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        352,
+        160
+      ],
+      "id": "ecd88266-1c94-404d-b77b-67a33d163841",
+      "name": "Send alert",
+      "webhookId": "f9d9361c-39c0-47c1-be38-1c9e7f78a49b",
+      "executeOnce": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iFm5TtV53u0FN0wG",
+          "name": "bot-gmail"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Log error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log error": {
+      "main": [
+        [
+          {
+            "node": "Fail cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fail cases": {
+      "main": [
+        [
+          {
+            "node": "Has case",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has case": {
+      "main": [
+        [
+          {
+            "node": "Label failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label failed": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "iSzjQm5qWzWUUifi",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "25d6a1cb-18b4-4f2d-90d0-28e7340c7486",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "359120e4cfec393c86835acfee8b78363bd6ba25d9f232a5b7c692ab27438f82"
+  },
+  "nodeGroups": [],
+  "id": "iSzjQm5qWzWUUifi",
+  "tags": []
+}
